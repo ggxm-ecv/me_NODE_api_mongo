@@ -3,9 +3,10 @@ Imports
 */
     // Node
     const express = require('express');
+const Controllers = require('../controller/index');
 
     // Inner
-    const PostModel = require('../models/post.model')
+    const Crontrollers = require('../controller/index');
 //
 
 /* 
@@ -23,14 +24,43 @@ Defintiion
                 return res.json( { msg: "Hello API" } )
             })
 
-            // Define API route to get all data (post)
+            // Define API route to create on data
+            this.router.post('/:endpoint', (req, res) => {
+                Controllers[req.params.endpoint].createOne(req)
+                .then( apiResponse => res.json( { data: apiResponse, err: null } ))
+                .catch( apiError => res.json( { data: null, err: apiError } ))
+            })
+
+            // Define API route to get all data
             this.router.get('/:endpoint', (req, res) => {
-                // Get all data from MongoDB
-                PostModel.find( (err, data) => {
-                    return err
-                    ? res.json( { url: req.originalUrl, data: null, err } )
-                    : res.json( { url: req.originalUrl, data, err: null } )
-                })
+                // User the controller to get data
+                Controllers[req.params.endpoint].readAll()
+                .then( apiResponse => res.json( { data: apiResponse, err: null } ))
+                .catch( apiError => res.json( { data: null, err: apiError } ))
+            })
+
+            // Define API route to get one data
+            this.router.get('/:endpoint/:id', (req, res) => {
+                // User the controller to get data
+                Controllers[req.params.endpoint].readOne(req)
+                .then( apiResponse => res.json( { data: apiResponse, err: null } ))
+                .catch( apiError => res.json( { data: null, err: apiError } ))
+            })
+
+            // Define API route to update one data
+            this.router.put('/:endpoint/:id', (req, res) => {
+                // User the controller to get data
+                Controllers[req.params.endpoint].updateOne(req)
+                .then( apiResponse => res.json( { data: apiResponse, err: null } ))
+                .catch( apiError => res.json( { data: null, err: apiError } ))
+            })
+
+            // Define API route to delete one data
+            this.router.delete('/:endpoint/:id', (req, res) => {
+                // User the controller to get data
+                Controllers[req.params.endpoint].deleteOne(req)
+                .then( apiResponse => res.json( { data: apiResponse, err: null } ))
+                .catch( apiError => res.json( { data: null, err: apiError } ))
             })
         }
 
