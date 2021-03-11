@@ -46,7 +46,7 @@ Defintiion
                 })
             })
 
-            // Define backoffice route to create new post
+            // Define backoffice route to display form to create new post
             this.router.get('/post/create', (req, res) => {
                 // Render edit vue with data
                 return res.render('create', {
@@ -56,6 +56,27 @@ Defintiion
                     data: { title:undefined, content: undefined },
                     url: req.originalUrl,
                     status: 200
+                })
+            })
+
+            // Define backoffice route to create new post
+            this.router.post('/post/create', (req, res) => {
+                // Get all posts from the BDD
+                Controllers.post.createOne(req)
+                .then( apiResponse => {
+                    // Redirect to edit page
+                    return res.redirect(`/post/edit/${apiResponse._id}`)
+                })
+                .catch( apiError => {
+                    // Render create vue with error
+                    return res.render('create', {
+                        msg: 'Posts not created',
+                        method: req.method,
+                        err: apiError,
+                        data: { title: undefined, content: undefined },
+                        url: req.originalUrl,
+                        status: 404
+                    })
                 })
             })
 
