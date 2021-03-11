@@ -1,23 +1,23 @@
-/*
+/* 
 Imports
 */
     // Node
     const express = require('express');
     const Controllers = require('../controller/index');
-
 //
 
-/*
+/* 
 Defintiion
 */
     class RouterClass{
-        constructor(){
+        constructor({ passport }){
             this.router = express.Router();
+            this.passport = passport;
         }
 
         routes(){
             // TODO: create service to send data
-
+            
             // Define API route
             this.router.get('/', (req, res) => {
                 // Rerturn JSON data
@@ -25,7 +25,7 @@ Defintiion
             })
 
             // Define API route to create on data
-            this.router.post('/:endpoint', (req, res) => {
+            this.router.post('/:endpoint', this.passport.authenticate('jwt', { session: false }), (req, res) => {
                 // TODO: check body data
                 Controllers[req.params.endpoint].createOne(req)
                 .then( apiResponse => res.json( { data: apiResponse, err: null } ))
@@ -49,7 +49,7 @@ Defintiion
             })
 
             // Define API route to update one data
-            this.router.put('/:endpoint/:id', (req, res) => {
+            this.router.put('/:endpoint/:id', this.passport.authenticate('jwt', { session: false }), (req, res) => {
                 // TODO: check body data
                 // TODO: check id user can update
                 // User the controller to get data
@@ -59,7 +59,7 @@ Defintiion
             })
 
             // Define API route to delete one data
-            this.router.delete('/:endpoint/:id', (req, res) => {
+            this.router.delete('/:endpoint/:id', this.passport.authenticate('jwt', { session: false }), (req, res) => {
                 // User the controller to get data
                 // TODO: check id user can update
                 Controllers[req.params.endpoint].deleteOne(req)
@@ -79,7 +79,7 @@ Defintiion
 
 //
 
-/*
+/* 
 Export
 */
     module.exports = RouterClass;

@@ -1,16 +1,19 @@
-/* 
+/*
 Imports
 */
     const Models = require('../models/index')
 //
 
-/* 
+/*
 Functions
 */
     // CRUD: create one
     const createOne = req => {
         return new Promise( (resolve, reject) => {
-            // Get all post from MongoDB
+            // Inject user _id in body author value
+            req.body.author = req.user._id;
+
+            // Create new object
             Models.post.create(req.body)
             .then( data => resolve(data) )
             .catch( err => reject(err) )
@@ -71,7 +74,7 @@ Functions
 
 //
 
-/* 
+/*
 Export
 */
     module.exports = {

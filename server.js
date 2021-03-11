@@ -6,6 +6,8 @@ Imports
     const express = require('express'); //=> https://www.npmjs.com/package/express
     const path = require('path'); //=> https://www.npmjs.com/package/path
     const bodyParser = require('body-parser'); //=> https://www.npmjs.com/package/body-parser
+    const cookieParser = require('cookie-parser'); //=> https://www.npmjs.com/package/cookie-parser
+    const passport = require('passport'); //=> https://www.npmjs.com/package/passport
 
     // Inner
     const MongoClass = require('./services/mongo.class')
@@ -36,21 +38,31 @@ Server definition
             this.server.use(bodyParser.json({limit: '20mb'}));
             this.server.use(bodyParser.urlencoded({ extended: true }));
 
+            //=> Use CookieParser to setup serverside cookies
+            this.server.use(cookieParser(process.env.COOKIE_SECRET));
+
             // Start config
             this.config();
         }
 
         config(){
-            // TODO: set auth route
+            // Set authentication
+            const { setAuthentication } = require('./services/passport.service');
+            setAuthentication(passport);
+
+            // Set up AUTH router
+            const AuthRouterClass = require('./router/auth.router');
+            const authRouter = new AuthRouterClass( { passport } );
+            this.server.use('/api/auth', authRouter.init());
 
             // Set up API router
             const ApiRouterClass = require('./router/api.router');
-            const apiRouter = new ApiRouterClass();
+            const apiRouter = new ApiRouterClass({ passport });
             this.server.use('/api', apiRouter.init());
 
             // Set up Backoffice router
             const BackRouterClass = require('./router/backoffice.router');
-            const backRouter = new BackRouterClass();
+            const backRouter = new BackRouterClass({ passport });
             this.server.use('/', backRouter.init());
 
             // Start server
