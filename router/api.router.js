@@ -1,15 +1,13 @@
-/* 
+/*
 Imports
 */
     // Node
     const express = require('express');
-const Controllers = require('../controller/index');
+    const Controllers = require('../controller/index');
 
-    // Inner
-    const Crontrollers = require('../controller/index');
 //
 
-/* 
+/*
 Defintiion
 */
     class RouterClass{
@@ -19,7 +17,7 @@ Defintiion
 
         routes(){
             // TODO: create service to send data
-            
+
             // Define API route
             this.router.get('/', (req, res) => {
                 // Rerturn JSON data
@@ -81,7 +79,7 @@ Defintiion
 
 //
 
-/* 
+/*
 Export
 */
     module.exports = RouterClass;
